@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Door = new Schema({
+  code: {
+    type: Number,
+    required: [true, "Código identificador é necessário!"],
+    unique: true,
+  },
   distanceOpen: {
     type: Number,
     required: [true, "Distancia de abertura é obrigatória!"],

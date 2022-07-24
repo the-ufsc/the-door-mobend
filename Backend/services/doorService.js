@@ -19,6 +19,17 @@ async function getAllDoors() {
   }
 }
 
+async function getDoorByCode({ id }) {
+  try {
+    const result = await Door.findOne({ code: id });
+    if (result === null)
+      return [404, { message: "Nenhuma Door encontrado por esse Código!" }];
+    return [200, result];
+  } catch (error) {
+    return [500, { error: error.message }];
+  }
+}
+
 async function getDoorById({ id }) {
   try {
     const result = await Door.findById(id);
@@ -61,6 +72,7 @@ var exports = {
   getDoorById,
   updateDoorById,
   deleteDoorById,
+  getDoorByCode,
 };
 
 module.exports = exports;

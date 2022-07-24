@@ -4,7 +4,7 @@ import { SafeAreaView, ScrollView, StyleSheet, View, Text } from "react-native";
 export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Opa man</Text>
+      <Text>Minhas Doors</Text>
     </SafeAreaView>
   );
 }

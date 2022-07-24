@@ -4,6 +4,7 @@ const {
   getDoorById,
   updateDoorById,
   deleteDoorById,
+  getDoorByCode,
 } = require("../services/doorService");
 
 const router = require("express").Router();
@@ -30,6 +31,12 @@ router.get("/", async ({ res }) => {
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
   const result = await getDoorById({ id });
+  res.status(result[0]).json(result[1]);
+});
+
+router.get("/code/:id", async (req, res) => {
+  const id = req.params.id;
+  const result = await getDoorByCode({ id });
   res.status(result[0]).json(result[1]);
 });
 
