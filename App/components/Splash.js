@@ -7,7 +7,7 @@ export default function SplashScreen({ children }) {
   const [ready, setReady] = useState(false);
 
   async function load() {
-    await new Promise((r) => setTimeout(r, 3000));
+    await new Promise((r) => setTimeout(r, 5000));
     setReady(true);
   }
 
@@ -23,8 +23,13 @@ export default function SplashScreen({ children }) {
       ) : (
         <View style={styles.boxFlash}>
           <View>
-            <Image style={styles.image} source={require("../assets/house.png")} />
-            <Text style={styles.text}>The House</Text>
+            <View style={styles.boxImage}>
+              <Image
+                style={styles.image}
+                source={require("../assets/animado.gif")}
+              />
+            </View>
+            <Text style={styles.text}>The Door</Text>
           </View>
         </View>
       )}
@@ -47,13 +52,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
   },
 
+  boxImage: {
+    display: "flex",
+    alignItems: "center",
+  },
+
   image: {
-    width: 120,
-    height: 120,
+    width: "100%",
   },
 
   text: {
     color: "#FFF",
     fontSize: 60,
+    fontWeight: "bold",
   },
 });
