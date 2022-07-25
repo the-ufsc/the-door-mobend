@@ -7,7 +7,7 @@ export default function SplashScreen({ children }) {
   const [ready, setReady] = useState(false);
 
   async function load() {
-    await new Promise((r) => setTimeout(r, 5000));
+    // await new Promise((r) => setTimeout(r, 5000));
     setReady(true);
   }
 
