@@ -6,7 +6,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
   TextInput,
   Switch,
 } from "react-native";
@@ -28,46 +27,59 @@ function TextField({ error, label, ...inputProps }) {
   );
 }
 
-export default function AddScreen({ navigation }) {
+export default function EditScreen({ navigation, route }) {
+  const id = route.params.id;
+
   const [formNumber, setFormNumber] = useState({});
-
   const [formText, setFormText] = useState({});
-
   const [isActive, setIsActive] = useState(true);
   const [openModalInit, setOpenModalInit] = useState(false);
   const [openModalEnd, setOpenModalEnd] = useState(false);
   const [haveError, setHaveError] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    navigation.addListener("focus", () => onLoad());
-  }, [navigation]);
+    console.log("oshi", id);
+    onLoad();
+  }, [id]);
 
   function onLoad() {
-    createForms();
     setLoading(false);
+    getData();
   }
 
-  function createForms() {
+  async function getData() {
+    axios
+      .get(config.url + "/doors/" + id)
+      .then(function (response) {
+        updateForm(response.data);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }
+
+  function updateForm(data) {
+    console.log("achei", data);
     setFormNumber({
-      code: "",
-      distanceOpen: "",
-      openDegree: "",
-      closeDegree: "",
+      code: data?.code?.toString() || "",
+      distanceOpen: data.distanceOpen?.toString() || "",
+      openDegree: data.openDegree?.toString() || "",
+      closeDegree: data.closeDegree?.toString() || "",
     });
+    setIsActive(data.isActivated);
     setFormText({
-      initialPosition: "open",
-      initialHourWorking: "00:00",
-      endHourWorking: "00:00",
+      initialPosition: data?.initialPosition || "",
+      initialHourWorking: data?.initialHourWorking || "",
+      endHourWorking: data?.endHourWorking || "",
     });
-    setIsActive(true);
     setOpenModalInit(false);
     setOpenModalEnd(false);
     setHaveError(false);
   }
 
   function verifyNumber(input, type) {
+    console.log("eita");
     let verifyInput = input.replace(/[^\d]/g, "");
     let newForm = { ...formNumber };
     newForm[type] = verifyInput;
@@ -115,7 +127,21 @@ export default function AddScreen({ navigation }) {
     return isAllRight;
   }
 
+  async function onDelete() {
+    if (!loading) {
+      try {
+        setLoading(true);
+        const result = await axios.delete(config.url + "/doors/" + id);
+        setLoading(false);
+        navigation.navigate("Inicial");
+      } catch {
+        setLoading(false);
+      }
+    }
+  }
+
   async function onSubmit() {
+    console.log("opa");
     if (!loading || verifyInputs()) {
       try {
         setLoading(true);
@@ -124,7 +150,7 @@ export default function AddScreen({ navigation }) {
           ...formText,
           isActivated: isActive,
         };
-        const result = await axios.post(config.url + "/doors", date);
+        const result = await axios.patch(config.url + "/doors/" + id, date);
         setLoading(false);
         navigation.navigate("Inicial");
       } catch {
@@ -135,19 +161,24 @@ export default function AddScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Adicionar Door</Text>
+      <Text style={styles.title}>Door {formNumber.code}</Text>
+      <TouchableOpacity style={[styles.logButton, { marginBottom: 20 }]}>
+        <Text style={{ color: "white" }}>Acessar Log's</Text>
+      </TouchableOpacity>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.containerInput}
       >
-        <TextField
-          keyboardType="number-pad"
-          label={"Código identificador"}
-          placeholder={"Ex.: 10"}
-          onChangeText={(e) => verifyNumber(e, "code")}
-          value={formNumber.code}
-          textAlign="center"
-        />
+        {formNumber.code && (
+          <TextField
+            keyboardType="number-pad"
+            label={"Código identificador"}
+            placeholder={"Ex.: 10"}
+            // onChangeText={(e) => verifyNumber(e, "code")}
+            value={formNumber?.code}
+            textAlign="center"
+          />
+        )}
         <TextField
           keyboardType="number-pad"
           label={"Distancia de abertura (cm)"}
@@ -273,12 +304,16 @@ export default function AddScreen({ navigation }) {
 
           <View style={{ marginVertical: 20, width: "100%" }}>
             <TouchableOpacity onPress={onSubmit} style={styles.submitButton}>
-              <Text style={styles.textButtonSubmit}>Adicionar</Text>
+              <Text style={styles.textButtonSubmit}>Atualizar</Text>
             </TouchableOpacity>
 
             <Text style={styles.textError}>
               {haveError && "Há entradas com erro"}
             </Text>
+
+            <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
+              <Text style={styles.textButtonSubmit}>Excluir</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -293,6 +328,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#e0dede",
     paddingVertical: 10,
+  },
+  logButton: {
+    backgroundColor: "green",
+    padding: 5,
+    borderRadius: 5,
   },
   containerInput: {
     width: "80%",
@@ -347,6 +387,11 @@ const styles = StyleSheet.create({
   submitButton: {
     width: "100%",
     backgroundColor: "green",
+    borderRadius: 10,
+  },
+  deleteButton: {
+    width: "100%",
+    backgroundColor: "red",
     borderRadius: 10,
   },
   textButtonSubmit: {

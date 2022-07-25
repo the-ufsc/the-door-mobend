@@ -1,29 +1,43 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
-  ScrollView,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import config from "../config.json";
 
 export default function HomeScreen({ navigation }) {
-  const doors = [{ code: 1 }, { code: 2 }];
+  const [doorsData, setDoorsData] = useState([]);
+
+  useEffect(() => {
+    navigation.addListener("focus", () => getData());
+  }, [navigation]);
+
+  function getData() {
+    axios
+      .get(config.url + "/doors")
+      .then(function (response) {
+        setDoorsData(response.data);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }
 
   function RenderDoor({ door, index }) {
     return (
-      <View
+      <TouchableOpacity
         style={[
           styles.rowList,
           index % 2 === 0 ? styles.rowWhite : styles.rowGray,
         ]}
+        onPress={() => navigation.navigate("Edit", { id: door._id })}
       >
-        <TouchableOpacity onPress={() => navigation.navigate("Adicionar")}>
-          <Text style={styles.textDoor}>Door {door?.code}</Text>
-        </TouchableOpacity>
-      </View>
+        <Text style={styles.textDoor}>Door {door?.code}</Text>
+      </TouchableOpacity>
     );
   }
 
@@ -39,7 +53,7 @@ export default function HomeScreen({ navigation }) {
 
       <FlatList
         style={styles.boxList}
-        data={doors}
+        data={doorsData}
         renderItem={({ item, index }) => (
           <RenderDoor door={item} index={index} />
         )}
@@ -89,5 +103,6 @@ const styles = StyleSheet.create({
   textDoor: {
     fontSize: 15,
     fontWeight: "600",
+    paddingVertical: 20,
   },
 });
