@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "express": "^4.18.1",
+    "moment-timezone": "^0.5.34",
     "mongoose": "^6.4.0",
     "nodemon": "^2.0.16"
   },
