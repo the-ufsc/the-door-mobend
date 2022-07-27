@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const moment = require("moment-timezone");
-const dateBrasil = moment.tz(Date.now(), "American/Sao_Paulo");
-
 const Log = new Schema({
   idDoor: {
     type: Schema.Types.ObjectId,
@@ -12,7 +9,7 @@ const Log = new Schema({
   },
   datetime: {
     type: Date,
-    default: dateBrasil,
+    default: Date.now,
   },
   action: {
     type: String,

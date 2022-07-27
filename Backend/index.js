@@ -3,7 +3,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 
-// config para ler JSON (com middlewares)
 app.use(
   express.urlencoded({
     extended: true,
