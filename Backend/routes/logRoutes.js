@@ -4,9 +4,18 @@ const {
   getLogById,
   updateLogById,
   deleteLogById,
+  getAllLogsByDoorID,
 } = require("../services/logService");
 
 const router = require("express").Router();
+
+router.post("/door/:id", async (req, res) => {
+  const doorId = req.params.id;
+  const logInfo = ({ idDoor, datetime, action } = req.body);
+  logInfo.idDoor = doorId;
+  const result = await createLog({ logInfo });
+  res.status(result[0]).json(result[1]);
+});
 
 router.post("/", async (req, res) => {
   const logInfo = ({ idDoor, datetime, action } = req.body);
@@ -22,6 +31,12 @@ router.get("/", async ({ res }) => {
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
   const result = await getLogById({ id });
+  res.status(result[0]).json(result[1]);
+});
+
+router.get("/door/:id", async (req, res) => {
+  const idDoor = req.params.id;
+  const result = await getAllLogsByDoorID({ idDoor });
   res.status(result[0]).json(result[1]);
 });
 

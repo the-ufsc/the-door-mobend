@@ -9,6 +9,18 @@ async function createLog({ logInfo }) {
   }
 }
 
+async function getAllLogsByDoorID({ idDoor }) {
+  try {
+    const result = await Log.find({
+      idDoor: { $eq: idDoor },
+    });
+    if (result.length === 0) return [204];
+    return [200, result];
+  } catch (error) {
+    return [500, { error: error.message }];
+  }
+}
+
 async function getAllLogs() {
   try {
     const result = await Log.find();
@@ -61,6 +73,7 @@ var exports = {
   getLogById,
   updateLogById,
   deleteLogById,
+  getAllLogsByDoorID,
 };
 
 module.exports = exports;
