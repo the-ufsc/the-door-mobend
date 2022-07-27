@@ -12,7 +12,6 @@ import {
 } from "react-native";
 
 import axios from "axios";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import config from "../config.json";
 
 function TextField({ error, label, ...inputProps }) {
@@ -30,14 +29,9 @@ function TextField({ error, label, ...inputProps }) {
 
 export default function AddScreen({ navigation }) {
   const [formNumber, setFormNumber] = useState({});
-
   const [formText, setFormText] = useState({});
-
   const [isActive, setIsActive] = useState(true);
-  const [openModalInit, setOpenModalInit] = useState(false);
-  const [openModalEnd, setOpenModalEnd] = useState(false);
   const [haveError, setHaveError] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -62,8 +56,6 @@ export default function AddScreen({ navigation }) {
       endHourWorking: "00:00",
     });
     setIsActive(true);
-    setOpenModalInit(false);
-    setOpenModalEnd(false);
     setHaveError(false);
   }
 
@@ -78,17 +70,6 @@ export default function AddScreen({ navigation }) {
     let newTextForm = { ...formText };
     newTextForm[type] = value;
     setFormText({ ...newTextForm });
-  }
-
-  function handleConfirmModal(value, type) {
-    let date = new Date(value);
-    type === "initialHourWorking"
-      ? setOpenModalInit(false)
-      : setOpenModalEnd(false);
-    let hour = ("0" + date.getHours()).slice(-2);
-    let min = ("0" + date.getMinutes()).slice(-2);
-    let final = hour + ":" + min;
-    handleFormTextChange(final, type);
   }
 
   function verifyInputs() {
@@ -233,42 +214,6 @@ export default function AddScreen({ navigation }) {
                 Fechado
               </Text>
             </TouchableOpacity>
-          </View>
-
-          <View style={[styles.boxInput, { marginTop: 20 }]}>
-            <Text style={styles.label}>Hora de início</Text>
-            <Text>{formText.initialHourWorking}</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setOpenModalInit(true)}
-            >
-              <Text style={styles.textButton}>Definir hora</Text>
-            </TouchableOpacity>
-            <DateTimePickerModal
-              isVisible={openModalInit}
-              mode="time"
-              onConfirm={(value) =>
-                handleConfirmModal(value, "initialHourWorking")
-              }
-              onCancel={() => setOpenModalInit(false)}
-            />
-          </View>
-
-          <View style={[styles.boxInput, { marginTop: 20 }]}>
-            <Text style={styles.label}>Hora de término</Text>
-            <Text>{formText.endHourWorking}</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setOpenModalEnd(true)}
-            >
-              <Text style={styles.textButton}>Definir hora</Text>
-            </TouchableOpacity>
-            <DateTimePickerModal
-              isVisible={openModalEnd}
-              mode="time"
-              onConfirm={(value) => handleConfirmModal(value, "endHourWorking")}
-              onCancel={() => setOpenModalEnd(false)}
-            />
           </View>
 
           <View style={{ marginVertical: 20, width: "100%" }}>

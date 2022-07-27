@@ -27,7 +27,6 @@
     "react-native-format-currency": "^0.0.1",
     "react-native-image-pan-zoom": "^2.1.12",
     "react-native-maps": "0.29.4",
-    "react-native-modal-datetime-picker": "^13.1.2",
     "react-native-paper": "^4.12.1",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",

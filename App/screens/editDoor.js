@@ -11,7 +11,6 @@ import {
 } from "react-native";
 
 import axios from "axios";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import config from "../config.json";
 
 function TextField({ error, label, ...inputProps }) {
@@ -29,17 +28,13 @@ function TextField({ error, label, ...inputProps }) {
 
 export default function EditScreen({ navigation, route }) {
   const id = route.params.id;
-
   const [formNumber, setFormNumber] = useState({});
   const [formText, setFormText] = useState({});
   const [isActive, setIsActive] = useState(true);
-  const [openModalInit, setOpenModalInit] = useState(false);
-  const [openModalEnd, setOpenModalEnd] = useState(false);
   const [haveError, setHaveError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("oshi", id);
     onLoad();
   }, [id]);
 
@@ -72,8 +67,6 @@ export default function EditScreen({ navigation, route }) {
       initialHourWorking: data?.initialHourWorking || "",
       endHourWorking: data?.endHourWorking || "",
     });
-    setOpenModalInit(false);
-    setOpenModalEnd(false);
     setHaveError(false);
   }
 
@@ -88,17 +81,6 @@ export default function EditScreen({ navigation, route }) {
     let newTextForm = { ...formText };
     newTextForm[type] = value;
     setFormText({ ...newTextForm });
-  }
-
-  function handleConfirmModal(value, type) {
-    let date = new Date(value);
-    type === "initialHourWorking"
-      ? setOpenModalInit(false)
-      : setOpenModalEnd(false);
-    let hour = ("0" + date.getHours()).slice(-2);
-    let min = ("0" + date.getMinutes()).slice(-2);
-    let final = hour + ":" + min;
-    handleFormTextChange(final, type);
   }
 
   function verifyInputs() {
@@ -139,6 +121,7 @@ export default function EditScreen({ navigation, route }) {
   }
 
   async function onSubmit() {
+    console.log("opa");
     if (!loading || verifyInputs()) {
       try {
         setLoading(true);
@@ -156,29 +139,29 @@ export default function EditScreen({ navigation, route }) {
     }
   }
 
-  const [data, setData] = useState([]);
-  setData[{ nome: "abc" }];
-
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Door {formNumber.code}</Text>
-      <TouchableOpacity style={[styles.logButton, { marginBottom: 20 }]}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("Log", { id, code: formNumber?.code })
+        }
+        style={[styles.logButton, { marginBottom: 20 }]}
+      >
         <Text style={{ color: "white" }}>Acessar Log's</Text>
       </TouchableOpacity>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.containerInput}
       >
-        {formNumber.code && (
-          <TextField
-            keyboardType="number-pad"
-            label={"Código identificador"}
-            placeholder={"Ex.: 10"}
-            // onChangeText={(e) => verifyNumber(e, "code")}
-            value={formNumber?.code}
-            textAlign="center"
-          />
-        )}
+        <TextField
+          keyboardType="number-pad"
+          label={"Código identificador"}
+          placeholder={"Ex.: 10"}
+          onChangeText={(e) => verifyNumber(e, "code")}
+          value={formNumber?.code}
+          textAlign="center"
+        />
         <TextField
           keyboardType="number-pad"
           label={"Distancia de abertura (cm)"}
@@ -203,21 +186,20 @@ export default function EditScreen({ navigation, route }) {
           value={formNumber.closeDegree}
           textAlign="center"
         />
-        {data?.length > 0 && (
-          <View style={styles.boxInput}>
-            <Text style={styles.label}>
-              {isActive ? "Ativado (em funcionamento)" : "Desativado/desligado"}
-            </Text>
-            <Switch
-              trackColor={{ false: "red", true: "green" }}
-              thumbColor={"#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={(e) => setIsActive(e)}
-              value={isActive}
-              style={{ transform: [{ scaleX: 1.8 }, { scaleY: 1.8 }] }}
-            />
-          </View>
-        )}
+
+        <View style={styles.boxInput}>
+          <Text style={styles.label}>
+            {isActive ? "Ativado (em funcionamento)" : "Desativado/desligado"}
+          </Text>
+          <Switch
+            trackColor={{ false: "red", true: "green" }}
+            thumbColor={"#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={(e) => setIsActive(e)}
+            value={isActive}
+            style={{ transform: [{ scaleX: 1.8 }, { scaleY: 1.8 }] }}
+          />
+        </View>
         <View style={[styles.boxInput, { marginTop: 10 }]}>
           <Text style={styles.label}>Posição Inicial</Text>
           <View style={styles.boxButtons}>
@@ -264,45 +246,11 @@ export default function EditScreen({ navigation, route }) {
               </Text>
             </TouchableOpacity>
           </View>
-
-          <View style={[styles.boxInput, { marginTop: 20 }]}>
-            <Text style={styles.label}>Hora de início</Text>
-            <Text>{formText.initialHourWorking}</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setOpenModalInit(true)}
-            >
-              <Text style={styles.textButton}>Definir hora</Text>
-            </TouchableOpacity>
-            <DateTimePickerModal
-              isVisible={openModalInit}
-              mode="time"
-              onConfirm={(value) =>
-                handleConfirmModal(value, "initialHourWorking")
-              }
-              onCancel={() => setOpenModalInit(false)}
-            />
-          </View>
-
-          <View style={[styles.boxInput, { marginTop: 20 }]}>
-            <Text style={styles.label}>Hora de término</Text>
-            <Text>{formText.endHourWorking}</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setOpenModalEnd(true)}
-            >
-              <Text style={styles.textButton}>Definir hora</Text>
-            </TouchableOpacity>
-            <DateTimePickerModal
-              isVisible={openModalEnd}
-              mode="time"
-              onConfirm={(value) => handleConfirmModal(value, "endHourWorking")}
-              onCancel={() => setOpenModalEnd(false)}
-            />
-          </View>
-
           <View style={{ marginVertical: 20, width: "100%" }}>
-            <TouchableOpacity onPress={onSubmit} style={styles.submitButton}>
+            <TouchableOpacity
+              onPress={() => onSubmit()}
+              style={styles.submitButton}
+            >
               <Text style={styles.textButtonSubmit}>Atualizar</Text>
             </TouchableOpacity>
 
@@ -310,7 +258,10 @@ export default function EditScreen({ navigation, route }) {
               {haveError && "Há entradas com erro"}
             </Text>
 
-            <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
+            <TouchableOpacity
+              onPress={() => onDelete()}
+              style={styles.deleteButton}
+            >
               <Text style={styles.textButtonSubmit}>Excluir</Text>
             </TouchableOpacity>
           </View>

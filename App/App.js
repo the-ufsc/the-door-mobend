@@ -6,7 +6,8 @@ import HomeScreen from "./screens/Home";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import AddScreen from "./screens/AddDoor";
-import EditScreen from "./screens/editDoor";
+import EditScreen from "./screens/EditDoor";
+import LogsScreen from "./screens/Logs";
 
 export default function App() {
   const Tab = createBottomTabNavigator();
@@ -55,6 +56,11 @@ export default function App() {
               options={{ tabBarItemStyle: { display: "none" } }}
               name="Edit"
               component={EditScreen}
+            />
+            <Tab.Screen
+              options={{ tabBarItemStyle: { display: "none" } }}
+              name="Log"
+              component={LogsScreen}
             />
           </Tab.Navigator>
         </NavigationContainer>

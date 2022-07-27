@@ -21,6 +21,7 @@ const String WIFI_SSD = "ole telecom.132145";
 const String WIFI_PASSW = "33305300";
 
 // variaveis do sistema
+String oldMov = "";
 int countExec = 0;
 long soundDuration = 0;
 float distanceCm = 0;
@@ -61,13 +62,14 @@ void setup()
   getData();
 }
 
-void sendLog(String actionaaa)
+void sendLog(String msgAction)
 {
-  String link = API_URL + "/doors/code/" + doorID;
+  String link = API_URL + "/logs/door/" + doorID;
   Serial.println(link);
   http.begin(client, link);
   http.addHeader("Content-Type", "application/json");
-  int httpCode = http.POST(("{ \"action\": \"Hello\" }"));
+  String data = "{ \"action\": \"" + msgAction + "\" }";
+  int httpCode = http.POST(data);
   if (httpCode > 0)
   {
     Serial.println("Enviado com sucesso!");
@@ -81,7 +83,7 @@ void sendLog(String actionaaa)
 
 void getData()
 {
-  String link = API_URL + "/doors/code/" + "62e1036b2185101f91b6424f";
+  String link = API_URL + "/doors/code/" + doorCode;
   Serial.println("Carregando data...");
   http.begin(client, link);
   int httpResponseCode = http.GET();
@@ -127,8 +129,7 @@ void loop()
   countExec += 1;
   if (countExec % 5 == 0)
   {
-    // getData();
-    sendLog("aaa");
+    getData();
   }
   if (isActivated)
   {
@@ -144,14 +145,22 @@ void loop()
     distanceCm = soundDuration * SOUND_VELOCITY / 2;
     Serial.println(distanceCm);
 
+    String currentMov = "";
     if (distanceCm < distanceOpen)
     {
       porta.write(openDegree);
+      currentMov = "open";
     }
     else
     {
       porta.write(closeDegree);
+      currentMov = "close";
     }
+    if (currentMov != oldMov)
+    {
+      sendLog(currentMov);
+    }
+    oldMov = currentMov;
   }
   else
   {
@@ -160,12 +169,10 @@ void loop()
     if (initialPosition == "open")
     {
       porta.write(openDegree);
-      Serial.println("01");
     }
     else
     {
       porta.write(closeDegree);
-      Serial.println("02");
     }
   }
 
