@@ -5,6 +5,7 @@ const {
   updateLogById,
   deleteLogById,
   getAllLogsByDoorID,
+  deleteAllLogByDoorId,
 } = require("../services/logService");
 
 const router = require("express").Router();
@@ -50,6 +51,12 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   const id = req.params.id;
   const result = await deleteLogById({ id });
+  res.status(result[0]).json(result[1]);
+});
+
+router.delete("/door/:id", async (req, res) => {
+  const idDoor = req.params.id;
+  const result = await deleteAllLogByDoorId({ idDoor });
   res.status(result[0]).json(result[1]);
 });
 

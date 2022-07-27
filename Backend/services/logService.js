@@ -13,7 +13,7 @@ async function getAllLogsByDoorID({ idDoor }) {
   try {
     const result = await Log.find({
       idDoor: { $eq: idDoor },
-    });
+    }).sort({ datetime: -1 });
     if (result.length === 0) return [204];
     return [200, result];
   } catch (error) {
@@ -23,7 +23,7 @@ async function getAllLogsByDoorID({ idDoor }) {
 
 async function getAllLogs() {
   try {
-    const result = await Log.find();
+    const result = await Log.find().sort({ datetime: -1 });
     if (result.length === 0) return [204];
     return [200, result];
   } catch (error) {
@@ -67,6 +67,20 @@ async function deleteLogById({ id }) {
   }
 }
 
+async function deleteAllLogByDoorId({ idDoor }) {
+  try {
+    const result = await Log.deleteMany({
+      idDoor: { $eq: idDoor },
+    });
+    if (result.deletedCount === 0) {
+      return [422, { message: "Nenhum Log encontrado para esse ID!" }];
+    }
+    return [200, { message: "Logs excluidos do sistema!" }];
+  } catch (error) {
+    return [500, { error: error.message }];
+  }
+}
+
 var exports = {
   getAllLogs,
   createLog,
@@ -74,6 +88,7 @@ var exports = {
   updateLogById,
   deleteLogById,
   getAllLogsByDoorID,
+  deleteAllLogByDoorId,
 };
 
 module.exports = exports;
