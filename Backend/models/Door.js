@@ -27,12 +27,6 @@ const Door = new Schema({
     type: Boolean,
     required: [true, "On/Off é obrigatório!"],
   },
-  initialHourWorking: {
-    type: String,
-  },
-  endHourWorking: {
-    type: String,
-  },
 });
 
 module.exports = mongoose.model("Door", Door);

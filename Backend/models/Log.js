@@ -9,7 +9,7 @@ const Log = new Schema({
   },
   datetime: {
     type: Date,
-    required: [true, "Horário é necessário!"],
+    default: Date.now,
   },
   action: {
     type: String,
