@@ -2,5 +2,3 @@
 2. Definir o lado que vai abrir (desenho pelo app)
 3. Salvar logs de abrir e fechar. (Hora, movimento)
 4. Desativar porta em uma posição específica (sempre aberta, fechada, etc)
-5. Definir horário em que ela vai ficar fixa.
-   Ex.: Comercio abre das 10h às 22h, então a porta só vai funcionar nesses horários.

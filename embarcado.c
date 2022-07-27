@@ -27,8 +27,8 @@ long soundDuration = 0;
 float distanceCm = 0;
 
 // Id Backend
-const int doorCode = 5; // defina o codigo dessa placa
-String doorID = "";     // id do back
+const int doorCode = 15; // defina o codigo dessa placa
+String doorID = ""; // id do back
 
 // variaveis API
 int distanceOpen = 0;
@@ -40,7 +40,7 @@ String initialHourWorking = "";
 String endHourWorking = "";
 
 WiFiClient client;
-HTTPClient http;
+HTTPClient http;                                  
 
 void setup()
 {
@@ -50,33 +50,28 @@ void setup()
   pinMode(PIN_TRIG, OUTPUT);
   pinMode(PIN_ECHO, INPUT);
 
-  Serial.print("Conectando wifi.");
+  Serial.print("Conectando wifi."); 
 
-  WiFi.begin(WIFI_SSD, WIFI_PASSW);
-  while (WiFi.status() != WL_CONNECTED)
-  {
+  WiFi.begin(WIFI_SSD, WIFI_PASSW);    
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    Serial.print("."); 
   }
   Serial.println("Ok!");
   getData();
 }
 
-void sendLog(String msgAction)
-{
+void sendLog(String msgAction){
   String link = API_URL + "/logs/door/" + doorID;
-  Serial.println(link);
   http.begin(client, link);
-  http.addHeader("Content-Type", "application/json");
+  http.addHeader("Content-Type", "application/json");                            
   String data = "{ \"action\": \"" + msgAction + "\" }";
   int httpCode = http.POST(data);
-  if (httpCode > 0)
-  {
-    Serial.println("Enviado com sucesso!");
+  if(httpCode > 0){
+    Serial.println("Http Enviado com sucesso!");
   }
-  else
-  {
-    Serial.println("Erro ao enviar");
+  else{
+    Serial.println("Erro ao enviar http");
   }
   Serial.println(httpCode);
 }
@@ -84,65 +79,60 @@ void sendLog(String msgAction)
 void getData()
 {
   String link = API_URL + "/doors/code/" + doorCode;
-  Serial.println("Carregando data...");
+  Serial.println("Carregando data...");  
   http.begin(client, link);
   int httpResponseCode = http.GET();
-  if (httpResponseCode > 0)
-  {
+  if (httpResponseCode > 0) {    
     JSONVar response = JSON.parse(http.getString());
-    doorID = removeMark(JSON.stringify(response["_id"]));
+    doorID = removeMark(JSON.stringify(response["_id"])); 
     distanceOpen = (JSON.stringify(response["distanceOpen"])).toInt();
     openDegree = (JSON.stringify(response["openDegree"])).toInt();
     closeDegree = (JSON.stringify(response["closeDegree"])).toInt();
-    initialPosition = removeMark(JSON.stringify(response["initialPosition"]));
+    initialPosition = removeMark(JSON.stringify(response["initialPosition"]));  
 
     String isActivatedResp = JSON.stringify(response["isActivated"]);
-    if (isActivatedResp == "false")
-    {
+    if (isActivatedResp == "false"){
       isActivated = false;
     }
-    else
-    {
-      isActivated = true;
+    else{
+      isActivated = true;      
     }
     Serial.println("Atualizado com sucesso.");
-  }
-  else
-  {
+  } 
+  else {
     Serial.println("Error http");
-  }
+  }  
 }
 
+
 // variavel vem com "aspas" da API, temos que tirar p/ usar.
-String removeMark(String x)
-{
+String removeMark(String x){
   String final;
   final = x;
   int len = x.length();
-  final.remove(len - 1, 1);
-  final.remove(0, 1);
+  final.remove(len-1,1);
+  final.remove(0,1);
   return final;
 }
 
 void loop()
 {
   countExec += 1;
-  if (countExec % 5 == 0)
-  {
+   if (countExec % 5 == 0){
     getData();
   }
-  if (isActivated)
-  {
+  if (isActivated){
     digitalWrite(PIN_TRIG, LOW);
     delayMicroseconds(2);
     digitalWrite(PIN_TRIG, HIGH);
     delayMicroseconds(10);
     digitalWrite(PIN_TRIG, LOW);
-
+  
     soundDuration = pulseIn(PIN_ECHO, HIGH);
-
+  
     // calcular a distancia (pulsos to cm)
     distanceCm = soundDuration * SOUND_VELOCITY / 2;
+    Serial.print("Distância lida: ");
     Serial.println(distanceCm);
 
     String currentMov = "";
@@ -162,19 +152,16 @@ void loop()
     }
     oldMov = currentMov;
   }
-  else
-  {
-    Serial.print("Porta está parada no modo: ");
-    Serial.println(initialPosition);
-    if (initialPosition == "open")
-    {
-      porta.write(openDegree);
-    }
-    else
-    {
-      porta.write(closeDegree);
-    }
+  else {
+   Serial.print("Porta está parada no modo: ");
+   Serial.println(initialPosition);
+   if(initialPosition == "open"){
+     porta.write(openDegree);
+   }
+   else {
+     porta.write(closeDegree);
+   }
   }
-
+  
   delay(1000);
 }

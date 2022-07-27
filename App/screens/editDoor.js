@@ -50,6 +50,7 @@ export default function EditScreen({ navigation, route }) {
         updateForm(response.data);
       })
       .catch(function (error) {
+        console.log("aqui 02");
         console.error(error);
       });
   }
@@ -121,7 +122,6 @@ export default function EditScreen({ navigation, route }) {
   }
 
   async function onSubmit() {
-    console.log("opa");
     if (!loading || verifyInputs()) {
       try {
         setLoading(true);

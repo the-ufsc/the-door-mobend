@@ -106,6 +106,12 @@ export default function LogsScreen({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
+      <View>
+        <TouchableOpacity onPress={() => getData()} style={styles.submitButton}>
+          <Text style={styles.textButtonSubmit}>Reload</Text>
+        </TouchableOpacity>
+      </View>
+
       {data && data.length > 0 ? (
         <FlatList
           style={styles.boxList}
@@ -113,7 +119,7 @@ export default function LogsScreen({ navigation, route }) {
           renderItem={({ item, index }) => (
             <RenderRow row={item} index={index} />
           )}
-          keyExtractor={(item) => item.code}
+          keyExtractor={(item) => item?._id || "flat"}
         />
       ) : (
         <View style={styles.notFoundContainer}>
@@ -197,5 +203,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "white",
     paddingVertical: 5,
+  },
+  submitButton: {
+    width: "100%",
+    backgroundColor: "green",
+    borderRadius: 10,
+    paddingHorizontal: 10,
   },
 });

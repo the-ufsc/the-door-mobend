@@ -23,6 +23,7 @@ export default function HomeScreen({ navigation }) {
         setDoorsData(response.data);
       })
       .catch(function (error) {
+        console.log("aqui 01");
         console.error(error);
       });
   }
