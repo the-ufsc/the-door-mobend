@@ -46,8 +46,16 @@ export default function App() {
             })}
           >
             <Tab.Screen name="Inicial" component={HomeScreen} />
-            <Tab.Screen name="Adicionar" component={AddScreen} />
-            <Tab.Screen name="Edit" component={EditScreen} />
+            <Tab.Screen
+              options={{ tabBarItemStyle: { display: "none" } }}
+              name="Adicionar"
+              component={AddScreen}
+            />
+            <Tab.Screen
+              options={{ tabBarItemStyle: { display: "none" } }}
+              name="Edit"
+              component={EditScreen}
+            />
           </Tab.Navigator>
         </NavigationContainer>
       </PaperProvider>

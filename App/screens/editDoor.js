@@ -60,7 +60,6 @@ export default function EditScreen({ navigation, route }) {
   }
 
   function updateForm(data) {
-    console.log("achei", data);
     setFormNumber({
       code: data?.code?.toString() || "",
       distanceOpen: data.distanceOpen?.toString() || "",
@@ -79,7 +78,6 @@ export default function EditScreen({ navigation, route }) {
   }
 
   function verifyNumber(input, type) {
-    console.log("eita");
     let verifyInput = input.replace(/[^\d]/g, "");
     let newForm = { ...formNumber };
     newForm[type] = verifyInput;
@@ -141,7 +139,6 @@ export default function EditScreen({ navigation, route }) {
   }
 
   async function onSubmit() {
-    console.log("opa");
     if (!loading || verifyInputs()) {
       try {
         setLoading(true);
@@ -158,6 +155,9 @@ export default function EditScreen({ navigation, route }) {
       }
     }
   }
+
+  const [data, setData] = useState([]);
+  setData[{ nome: "abc" }];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -195,7 +195,6 @@ export default function EditScreen({ navigation, route }) {
           value={formNumber.openDegree}
           textAlign="center"
         />
-
         <TextField
           keyboardType="number-pad"
           label={"Grau de fechamento"}
@@ -204,21 +203,21 @@ export default function EditScreen({ navigation, route }) {
           value={formNumber.closeDegree}
           textAlign="center"
         />
-
-        <View style={styles.boxInput}>
-          <Text style={styles.label}>
-            {isActive ? "Ativado (em funcionamento)" : "Desativado/desligado"}
-          </Text>
-          <Switch
-            trackColor={{ false: "red", true: "green" }}
-            thumbColor={"#f4f3f4"}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={(e) => setIsActive(e)}
-            value={isActive}
-            style={{ transform: [{ scaleX: 1.8 }, { scaleY: 1.8 }] }}
-          />
-        </View>
-
+        {data?.length > 0 && (
+          <View style={styles.boxInput}>
+            <Text style={styles.label}>
+              {isActive ? "Ativado (em funcionamento)" : "Desativado/desligado"}
+            </Text>
+            <Switch
+              trackColor={{ false: "red", true: "green" }}
+              thumbColor={"#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={(e) => setIsActive(e)}
+              value={isActive}
+              style={{ transform: [{ scaleX: 1.8 }, { scaleY: 1.8 }] }}
+            />
+          </View>
+        )}
         <View style={[styles.boxInput, { marginTop: 10 }]}>
           <Text style={styles.label}>Posição Inicial</Text>
           <View style={styles.boxButtons}>

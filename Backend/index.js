@@ -31,6 +31,6 @@ mongoose
   )
   .then(() => {
     console.log("Conectamos ao MongoDB!");
-    app.listen(3000);
+    app.listen(5000);
   }) //pra caso a conexão dê certo
   .catch((err) => console.log(err)); // pra exibir mensagem de erro, em caso de erro
